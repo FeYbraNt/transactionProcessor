@@ -13,38 +13,47 @@ class TransactionProcessor {
 
   // Check valid transactions rules
   static isValidTransaction(transaction) {
-    // ...
-    return true;
+    const isAmountNonNegative = (isFinite(parseFloat(transaction.amount)) && transaction.amount >= 0)
+    const isBrandLowerCase =  (transaction.brand == transaction.brand.toLowerCase())
+    const isCurrencyUpperCase = (transaction.currency == transaction.currency.toUpperCase())
+    const isIDGreaterZero = (transaction.id > 0)
+    return isAmountNonNegative && isBrandLowerCase && isCurrencyUpperCase && isIDGreaterZero;
   }
 
   // Remove invalid transactions
   filterInvalidTransactions() {
-    // ...
-    return this;
+    this.transactions = this.transactions.filter((transaction) => !TransactionProcessor.isValidTransaction(transaction))
+    return this
   }
 
   // Return transactions of given currency
   getTransactionsByCurrency(currency) {
-    // ...
-    return this;
+    this.transactions = this.transactions.filter((transaction) => (transaction.currency == currency));
+    return this
   }
 
   // Return transactions of given brand
   getTransactionsByBrand(brand) {
-    // ...
-    return this;
+    this.transactions = this.transactions.filter((transaction) => (transaction.brand == brand));
+    return this
   }
 
   // BONUS:
   // Apply multiple filters. Filters parameter should be an array of functions (predicates)
   filterTransaction(filters) {
-    // ...
-    return this;
+    this.transactions = this.transactions.filter( (transaction) => 
+      (filters.filter(fil => fil(transaction)).length == filters.length) 
+    )
+    return this
   }
 
   // Return the total amount of current transactions array
   sum() {
-    return 0;
+    const validTransactions = this.transactions.filter((transaction) => TransactionProcessor.isValidTransaction(transaction))
+    const result = validTransactions.reduce((acc, transaction) => {
+      return parseFloat((acc + transaction.amount).toFixed(2)) // Fast way to fix float pointing issues
+    }, 0)
+    return result
   }
 }
 
